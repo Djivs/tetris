@@ -10,10 +10,16 @@ CONFIG += c++11
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    widgets/game/gamewidget.cpp \
+    widgets/game/tetrispiece/tetrispiece.cpp \
+    widgets/menu/menuwidget.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    widgets/game/gamewidget.h \
+    widgets/game/tetrispiece/tetrispiece.h \
+    widgets/menu/menuwidget.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

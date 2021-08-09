@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "widgets/menu/menuwidget.h"
+#include "widgets/game/gamewidget.h"
 
 class MainWindow : public QMainWindow
 {
@@ -10,5 +12,12 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+private:
+    MenuWidget *menu;
+    GameWidget *game;
+
+    void setMenu();
+    void setGame();
+
 };
 #endif // MAINWINDOW_H
