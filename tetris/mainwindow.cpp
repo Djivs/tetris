@@ -3,7 +3,9 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    setMinimumSize(250, 250);
+
+
+    setMinimumSize(700, 700);
     setMenu();
 }
 

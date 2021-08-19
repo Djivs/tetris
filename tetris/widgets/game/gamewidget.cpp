@@ -2,9 +2,19 @@
 
 GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
     view = new QGraphicsView(this);
+    view->setMaximumSize(25 * 10 + 10, 25 * 20 + 10);
 
-    layout = new QVBoxLayout();
-    layout->addWidget(view);
+    auto spacer_left = new QSpacerItem(10, 10, QSizePolicy::Expanding);
+    auto spacer_right = new QSpacerItem(10, 10, QSizePolicy::Expanding);
+
+
+    layout = new QGridLayout();
+    layout->addWidget(view, 0, 1);
+    layout->addItem(spacer_left, 1, 0);
+    layout->addItem(spacer_right, 1, 2);
+    view->setAlignment(Qt::AlignCenter);
+
+    setLayout(layout);
 
     curPiece = new TetrisPiece(nullptr, randomTetrisPiece());
     addPiece();
@@ -24,7 +34,7 @@ void GameWidget::drawGame() {
     ///<- Draw board ->///
     for (int i = 0; i < 20; ++i) {
         for (int j = 0; j < 10; ++j) {
-            QRect cubeRect(10 * j, 10 * i, 10, 10);
+            QRect cubeRect(25 * j, 25 * i, 25, 25);
             QPen pen;
             if (board[i][j]) {
                 pen.setColor(Qt::black);

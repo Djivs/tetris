@@ -4,11 +4,12 @@
 #include <QWidget>
 #include <QGraphicsScene>
 #include <QGraphicsView>
-#include <QVBoxLayout>
+#include <QGridLayout>
 #include <QTimer>
 #include <QKeyEvent>
 #include <QRandomGenerator>
 #include <QMessageBox>
+#include <QSpacerItem>
 
 #include "tetrispiece/tetrispiece.h"
 
@@ -23,7 +24,7 @@ protected:
 private:
     QGraphicsScene scene;
     QGraphicsView *view;
-    QVBoxLayout *layout;
+    QGridLayout *layout;
 
     TetrisPiece *curPiece;
 

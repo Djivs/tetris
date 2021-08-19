@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QStyle>
 #include "widgets/menu/menuwidget.h"
 #include "widgets/game/gamewidget.h"
 
