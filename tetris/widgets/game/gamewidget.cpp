@@ -46,6 +46,7 @@ void GameWidget::makeLogic() {
         addPiece();
         return;
     } else {
+        clearLines();
         delete curPiece;
         curPiece = new TetrisPiece(nullptr, randomTetrisPiece());
         addPiece();
@@ -53,6 +54,8 @@ void GameWidget::makeLogic() {
 }
 
 void GameWidget::keyPressEvent(QKeyEvent *event) {
+//    if (status == CLEARINGLINES)
+//        return;
     if (event->key() == Qt::Key_S && isGoingDown()) {
         removePiece();
         curPiece->move('d');
@@ -82,15 +85,23 @@ void GameWidget::keyPressEvent(QKeyEvent *event) {
 }
 
 void GameWidget::clearLines() {
+    //status = CLEARINGLINES;
     for (int i = 19; i >= 0; --i) {
         int count = 0;
         for (int j = 0; j < 10; ++j) {
             count += board[i][j];
         }
         if (count == 10) {
-            return;
-        }
+            for (int j = i - 1; j > 0; --j) {
+                for (int jj = 0; jj < 10; ++jj) {
+                    board[j+1][jj] = board[j][jj];
+                }
+            }
+            ++i;
+        } else if (!count)
+            break;
     }
+    //status = GAME;
 }
 
 

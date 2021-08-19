@@ -73,9 +73,9 @@ void TetrisPiece::rotate(bool dir) {
         l -=1;
         if (type == 'I') {
             if (!board[0][0])
-                d += 1;
+                d -= 1;
             else
-                l +=1;
+                l -=1;
         }
         else if (board[3][0]) {
             if (QString("ZSTI").indexOf(type) != -1) {

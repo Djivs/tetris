@@ -44,6 +44,7 @@ private:
 
     QChar randomTetrisPiece() {
         return piecesTypes[QRandomGenerator::global()->generate() % 7];}
+    //return 'I';}
 
 signals:
 
