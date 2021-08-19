@@ -4,13 +4,18 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
     view = new QGraphicsView(this);
     view->setMaximumSize(25 * 10 + 10, 25 * 20 + 10);
 
-    auto spacer_left = new QSpacerItem(10, 10, QSizePolicy::Expanding);
+    linesBox = new QSpinBox();
+    linesBox->setEnabled(false);
+    linesBox->setValue(0);
+    linesBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    //auto spacer_left = new QSpacerItem(10, 10, QSizePolicy::Expanding);
     auto spacer_right = new QSpacerItem(10, 10, QSizePolicy::Expanding);
 
 
     layout = new QGridLayout();
     layout->addWidget(view, 0, 1);
-    layout->addItem(spacer_left, 1, 0);
+    layout->addWidget(linesBox, 0, 0);
     layout->addItem(spacer_right, 1, 2);
     view->setAlignment(Qt::AlignCenter);
 
@@ -26,7 +31,7 @@ void GameWidget::mainCycle() {
     makeLogic();
     drawGame();
     if (!gameover)
-        QTimer::singleShot(1000, this, [this] {mainCycle();});
+        QTimer::singleShot(1000 - 100 * (lines % 10), this, [this] {mainCycle();});
 }
 void GameWidget::drawGame() {
     scene.clear();
@@ -100,23 +105,25 @@ void GameWidget::keyPressEvent(QKeyEvent *event) {
 }
 
 void GameWidget::clearLines() {
-    //status = CLEARINGLINES;
-    for (int i = 19; i >= 0; --i) {
+    maxHeight = std::min(maxHeight, 20 - curPiece->getTopCoord() - 1);
+    for (int i = 19; i > maxHeight; --i) {
         int count = 0;
         for (int j = 0; j < 10; ++j) {
             count += board[i][j];
         }
         if (count == 10) {
-            for (int j = i - 1; j > 0; --j) {
+            ++lines;
+            for (int j = i - 1; j >= maxHeight; --j) {
                 for (int jj = 0; jj < 10; ++jj) {
                     board[j+1][jj] = board[j][jj];
                 }
             }
+            ++maxHeight;
             ++i;
-        } else if (!count)
-            break;
+        }
     }
-    //status = GAME;
+    qDebug() << maxHeight;
+    linesBox->setValue(lines);
 }
 
 

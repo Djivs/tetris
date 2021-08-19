@@ -10,6 +10,8 @@
 #include <QRandomGenerator>
 #include <QMessageBox>
 #include <QSpacerItem>
+#include <QSpinBox>
+#include <QLabel>
 
 #include "tetrispiece/tetrispiece.h"
 
@@ -25,11 +27,16 @@ private:
     QGraphicsScene scene;
     QGraphicsView *view;
     QGridLayout *layout;
+    QSpinBox *linesBox;
+
 
     TetrisPiece *curPiece;
 
     bool board[20][10] = {};
     bool gameover=0;
+
+    int maxHeight = 19;
+    int lines = 0;
 
     const QString piecesTypes = "ZSLJOIT";
 
