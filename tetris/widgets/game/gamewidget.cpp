@@ -6,6 +6,8 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
     layout = new QVBoxLayout();
     layout->addWidget(view);
 
+    curPiece = new TetrisPiece(nullptr, randomTetrisPiece());
+    addPiece();
 
     mainCycle();
 }
@@ -38,18 +40,82 @@ void GameWidget::drawGame() {
 }
 
 void GameWidget::makeLogic() {
-    if (curPiece == nullptr) {
-        curPiece = new TetrisPiece(nullptr, 'T');
-        addPiece(curPiece);
-    } else {
+    if (isGoingDown()) {
+        removePiece();
+        curPiece->move('d');
+        addPiece();
         return;
+    } else {
+        delete curPiece;
+        curPiece = new TetrisPiece(nullptr, randomTetrisPiece());
+        addPiece();
     }
-
 }
 
-void GameWidget::addPiece(TetrisPiece *piece) {
-    QVector <QPoint> pieceCells = piece->getCells();
+void GameWidget::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_S && isGoingDown()) {
+        removePiece();
+        curPiece->move('d');
+        addPiece();
+        drawGame();
+    } else if(event->key() == Qt::Key_A) {
+        removePiece();
+        curPiece->move('l');
+        addPiece();
+        drawGame();
+    } else if(event->key() == Qt::Key_D) {
+        removePiece();
+        curPiece->move('r');
+        addPiece();
+        drawGame();
+    } else if(event->key() == Qt::Key_G) {
+        removePiece();
+        curPiece->rotate(1);
+        addPiece();
+        drawGame();
+    } else if(event->key() == Qt::Key_F) {
+        removePiece();
+        curPiece->rotate(0);
+        addPiece();
+        drawGame();
+    }
+}
+
+void GameWidget::clearLines() {
+    for (int i = 19; i >= 0; --i) {
+        int count = 0;
+        for (int j = 0; j < 10; ++j) {
+            count += board[i][j];
+        }
+        if (count == 10) {
+            return;
+        }
+    }
+}
+
+
+void GameWidget::addPiece() {
+    QVector <QPoint> pieceCells = curPiece->getCells();
     for(auto &i: pieceCells) {
         board[20 - i.y()][i.x()-1] = 1;
     }
+}
+
+void GameWidget::removePiece() {
+    QVector <QPoint> pieceCells = curPiece->getCells();
+    for(auto &i: pieceCells) {
+        board[20 - i.y()][i.x()-1] = 0;
+    }
+}
+
+bool GameWidget::isGoingDown() {
+
+    QVector <QPoint> cells = curPiece->getCells();
+    for (int i = 0; i < 4; ++i) {
+        int x = cells[i].x(), y = cells[i].y()-1;
+        if (cells[i].y() == 1 || (cells.indexOf(QPoint(x, y)) == -1 && board[20 - y][x-1]))
+            return 0;
+
+    }
+    return true;
 }
