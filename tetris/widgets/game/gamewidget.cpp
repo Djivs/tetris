@@ -15,7 +15,8 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
 void GameWidget::mainCycle() {
     makeLogic();
     drawGame();
-    QTimer::singleShot(1000, this, [this] {mainCycle();});
+    if (!gameover)
+        QTimer::singleShot(1000, this, [this] {mainCycle();});
 }
 void GameWidget::drawGame() {
     scene.clear();
@@ -50,33 +51,37 @@ void GameWidget::makeLogic() {
         delete curPiece;
         curPiece = new TetrisPiece(nullptr, randomTetrisPiece());
         addPiece();
+        if (!isGoingDown()) {
+            gameover = true;
+            QMessageBox msgBox;
+            msgBox.setText("You failed");
+            msgBox.exec();
+        }
     }
 }
 
 void GameWidget::keyPressEvent(QKeyEvent *event) {
-//    if (status == CLEARINGLINES)
-//        return;
-    if (event->key() == Qt::Key_S && isGoingDown()) {
+    if (event->key() == Qt::Key_K && isGoingDown()) {
         removePiece();
         curPiece->move('d');
         addPiece();
         drawGame();
-    } else if(event->key() == Qt::Key_A) {
+    } else if(event->key() == Qt::Key_J && isGoingLeft()) {
         removePiece();
         curPiece->move('l');
         addPiece();
         drawGame();
-    } else if(event->key() == Qt::Key_D) {
+    } else if(event->key() == Qt::Key_L && isGoingRight()) {
         removePiece();
         curPiece->move('r');
         addPiece();
         drawGame();
-    } else if(event->key() == Qt::Key_G) {
+    } else if(event->key() == Qt::Key_F && isRotating(1)) {
         removePiece();
         curPiece->rotate(1);
         addPiece();
         drawGame();
-    } else if(event->key() == Qt::Key_F) {
+    } else if(event->key() == Qt::Key_D && isRotating(0)) {
         removePiece();
         curPiece->rotate(0);
         addPiece();
@@ -128,5 +133,41 @@ bool GameWidget::isGoingDown() {
             return 0;
 
     }
+    return true;
+}
+
+bool GameWidget::isGoingLeft() {
+
+    QVector <QPoint> cells = curPiece->getCells();
+    for (int i = 0; i < 4; ++i) {
+        int x = cells[i].x()-1, y = cells[i].y();
+        if (!x || ((cells.indexOf(QPoint(x, y)) == -1) && board[20 - y][x-1]))
+            return 0;
+
+    }
+    return true;
+}
+
+bool GameWidget::isGoingRight() {
+
+    QVector <QPoint> cells = curPiece->getCells();
+    for (int i = 0; i < 4; ++i) {
+        int x = cells[i].x()+1, y = cells[i].y();
+        if ((x == 11) || ((cells.indexOf(QPoint(x, y)) == -1) && board[20 - y][x-1]))
+            return 0;
+
+    }
+    return true;
+}
+bool GameWidget::isRotating(bool dir) {
+    TetrisPiece *buf = new TetrisPiece(curPiece);
+    buf->rotate(dir);
+    auto cells = buf->getCells();
+    for (int i = 0; i < 4; ++i) {
+        int x = cells[i].x(), y = cells[i].y();
+        if ((cells.indexOf(QPoint(x, y)) == -1) && board[20 - y][x-1])
+            return 0;
+    }
+    delete buf;
     return true;
 }

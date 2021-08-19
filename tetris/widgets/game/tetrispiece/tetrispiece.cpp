@@ -1,7 +1,13 @@
 #include "tetrispiece.h"
 
-TetrisPiece::TetrisPiece(QObject *parent, QChar _type) : QObject(parent) {
+TetrisPiece::TetrisPiece(TetrisPiece *parent, QChar _type) {
     type = _type;
+    if (parent != nullptr) {
+        type = parent->type;
+        cells = parent->cells;
+        return;
+    }
+
     switch (type.toLatin1()) {
         case 'O':
             cells.push_back(QPoint(5, 20));

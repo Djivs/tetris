@@ -10,7 +10,7 @@ class TetrisPiece : public QObject
 {
     Q_OBJECT
 public:
-    explicit TetrisPiece(QObject *parent = nullptr, QChar _type='I');
+    explicit TetrisPiece(TetrisPiece *parent = nullptr, QChar _type='I');
     void setType(char type);
     QVector <QPoint> const getCells() {return cells;}
 
@@ -22,7 +22,7 @@ public:
     int getLeftCoord();
     int getTopCoord();
     int getDownCoord();
-private:
+protected:
     QVector <QPoint> cells;
     QChar type;
 signals:

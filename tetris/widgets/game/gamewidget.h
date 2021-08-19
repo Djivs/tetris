@@ -8,6 +8,7 @@
 #include <QTimer>
 #include <QKeyEvent>
 #include <QRandomGenerator>
+#include <QMessageBox>
 
 #include "tetrispiece/tetrispiece.h"
 
@@ -27,6 +28,7 @@ private:
     TetrisPiece *curPiece;
 
     bool board[20][10] = {};
+    bool gameover=0;
 
     const QString piecesTypes = "ZSLJOIT";
 
@@ -41,6 +43,9 @@ private:
     void clearLines();
 
     bool isGoingDown();
+    bool isGoingLeft();
+    bool isGoingRight();
+    bool isRotating(bool dir);
 
     QChar randomTetrisPiece() {
         return piecesTypes[QRandomGenerator::global()->generate() % 7];}
