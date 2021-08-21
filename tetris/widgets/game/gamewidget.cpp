@@ -2,21 +2,16 @@
 
 GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
     view = new QGraphicsView(this);
-    view->setMaximumSize(25 * 10 + 10, 25 * 20 + 10);
+    view->setMaximumSize(25 * 10 + 10, 25 * 20 + 3);
 
     linesBox = new QSpinBox();
     linesBox->setEnabled(false);
+    linesBox->setMaximum(1000);
     linesBox->setValue(0);
     linesBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     linesLabel = new QLabel("Lines cleared:");
     linesLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-
-    linesLayout = new QVBoxLayout();
-    linesLayout->addStretch();
-    linesLayout->addWidget(linesLabel);
-    linesLayout->addWidget(linesBox);
-    linesLayout->setAlignment(Qt::AlignCenter);
 
     levelBox = new QSpinBox();
     levelBox->setEnabled(false);
@@ -26,20 +21,33 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
     levelLabel = new QLabel("Level:");
     levelLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    levelLayout = new QVBoxLayout();
-    levelLayout->addWidget(levelLabel);
-    levelLayout->addWidget(levelBox);
-    levelLayout->addStretch();
-    levelLayout->setAlignment(Qt::AlignCenter);
+    speedBox = new QSpinBox();
+    speedBox->setEnabled(false);
+    speedBox->setMaximum(1000);
+    speedBox->setValue(900);
+    speedBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    speedLabel = new QLabel("Current speed(ms):");
+    speedLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    statsLayout = new QVBoxLayout();
+    statsLayout->addStretch();
+    statsLayout->addWidget(linesLabel);
+    statsLayout->addWidget(linesBox);
+    statsLayout->addWidget(levelLabel);
+    statsLayout->addWidget(levelBox);
+    statsLayout->addWidget(speedLabel);
+    statsLayout->addWidget(speedBox);
+    statsLayout->addStretch();
+    statsLayout->setAlignment(Qt::AlignCenter);
 
     //auto spacer_left = new QSpacerItem(10, 10, QSizePolicy::Expanding);
     auto spacer_right = new QSpacerItem(10, 10, QSizePolicy::Expanding);
 
 
     layout = new QGridLayout();
-    layout->addWidget(view, 0, 1, 2, 1);
-    layout->addLayout(linesLayout, 0, 0);
-    layout->addLayout(levelLayout, 1, 0);
+    layout->addWidget(view, 0, 1);
+    layout->addLayout(statsLayout, 0, 0);
     layout->addItem(spacer_right, 1, 2);
     view->setAlignment(Qt::AlignCenter);
 
@@ -56,7 +64,7 @@ void GameWidget::mainCycle() {
         return;
     makeLogic();
     drawGame();
-    QTimer::singleShot(900 - 30 * level, this, [this] {mainCycle();});
+    QTimer::singleShot(speed, this, [this] {mainCycle();});
 }
 void GameWidget::drawGame() {
     scene.clear();
@@ -190,6 +198,8 @@ void GameWidget::clearLines() {
     linesBox->setValue(lines);
     level = lines / 10;
     levelBox->setValue(level);
+    speed = 900 - level * 30;
+    speedBox->setValue(speed);
 }
 
 

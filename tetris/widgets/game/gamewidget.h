@@ -27,12 +27,15 @@ private:
     QGraphicsScene scene;
     QGraphicsView *view;
     QGridLayout *layout;
+
     QSpinBox *linesBox;
     QLabel *linesLabel;
-    QVBoxLayout *linesLayout;
     QSpinBox *levelBox;
     QLabel *levelLabel;
-    QVBoxLayout *levelLayout;
+    QSpinBox *speedBox;
+    QLabel *speedLabel;
+
+    QVBoxLayout *statsLayout;
 
 
     TetrisPiece *curPiece;
@@ -44,9 +47,10 @@ private:
 
     int lines = 0;
     int level = 0;
+    int speed = 900;
 
     const QString piecesTypes = "ZSLJOIT";
-    const QColor colors[5] = {Qt::white, Qt::red, Qt::blue, Qt::darkGreen, Qt::magenta};
+    const QColor colors[5] = {Qt::black, Qt::red, Qt::blue, Qt::darkGreen, Qt::magenta};
 
     void mainCycle();
 
