@@ -80,8 +80,23 @@ void GameWidget::makeLogic() {
         if (!isGoingDown()) {
             gameover = true;
             QMessageBox msgBox;
-            msgBox.setText("You failed");
-            msgBox.exec();
+            msgBox.setText("You failed.\n Wanna try again?");
+            msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+            if (msgBox.exec()) {
+                gameover = false;
+                delete curPiece;
+                lines = 0;
+                for (int i = 0; i < 20; ++i) {
+                    for (int j = 0; j < 10; ++j) {
+                        board[i][j] = 0;
+                    }
+                }
+                curPiece = new TetrisPiece(nullptr, randomTetrisPiece());
+                addPiece();
+
+                mainCycle();
+
+            }
         }
     }
 }
