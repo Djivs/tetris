@@ -16,16 +16,30 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
     linesLayout->addStretch();
     linesLayout->addWidget(linesLabel);
     linesLayout->addWidget(linesBox);
-    linesLayout->addStretch();
     linesLayout->setAlignment(Qt::AlignCenter);
+
+    levelBox = new QSpinBox();
+    levelBox->setEnabled(false);
+    levelBox->setValue(0);
+    levelBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    levelLabel = new QLabel("Level:");
+    levelLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    levelLayout = new QVBoxLayout();
+    levelLayout->addWidget(levelLabel);
+    levelLayout->addWidget(levelBox);
+    levelLayout->addStretch();
+    levelLayout->setAlignment(Qt::AlignCenter);
 
     //auto spacer_left = new QSpacerItem(10, 10, QSizePolicy::Expanding);
     auto spacer_right = new QSpacerItem(10, 10, QSizePolicy::Expanding);
 
 
     layout = new QGridLayout();
-    layout->addWidget(view, 0, 1);
+    layout->addWidget(view, 0, 1, 2, 1);
     layout->addLayout(linesLayout, 0, 0);
+    layout->addLayout(levelLayout, 1, 0);
     layout->addItem(spacer_right, 1, 2);
     view->setAlignment(Qt::AlignCenter);
 
@@ -38,10 +52,11 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
 }
 
 void GameWidget::mainCycle() {
+    if (gameover)
+        return;
     makeLogic();
     drawGame();
-    if (!gameover)
-        QTimer::singleShot(900 - 30 * (lines % 10), this, [this] {mainCycle();});
+    QTimer::singleShot(900 - 30 * level, this, [this] {mainCycle();});
 }
 void GameWidget::drawGame() {
     scene.clear();
@@ -173,6 +188,8 @@ void GameWidget::clearLines() {
         }
     }
     linesBox->setValue(lines);
+    level = lines / 10;
+    levelBox->setValue(level);
 }
 
 

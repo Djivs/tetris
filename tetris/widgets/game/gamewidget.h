@@ -30,6 +30,9 @@ private:
     QSpinBox *linesBox;
     QLabel *linesLabel;
     QVBoxLayout *linesLayout;
+    QSpinBox *levelBox;
+    QLabel *levelLabel;
+    QVBoxLayout *levelLayout;
 
 
     TetrisPiece *curPiece;
@@ -38,7 +41,9 @@ private:
     bool gameover=0;
 
     int maxHeight = 19;
+
     int lines = 0;
+    int level = 0;
 
     const QString piecesTypes = "ZSLJOIT";
     const QColor colors[5] = {Qt::white, Qt::red, Qt::blue, Qt::darkGreen, Qt::magenta};
