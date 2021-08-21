@@ -47,6 +47,7 @@ private:
 
     void drawGame();
     void makeLogic();
+    void drawPause();
 
 
     void addPiece();

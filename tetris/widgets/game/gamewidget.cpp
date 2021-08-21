@@ -61,6 +61,11 @@ void GameWidget::drawGame() {
 
 }
 
+void GameWidget::drawPause() {
+    scene.clear();
+    scene.addText("Pause");
+}
+
 void GameWidget::makeLogic() {
     if (isGoingDown()) {
         removePiece();
@@ -126,7 +131,10 @@ void GameWidget::keyPressEvent(QKeyEvent *event) {
         break;
     case Qt::Key_P:
         gameover = !gameover;
-        mainCycle();
+        if (!gameover)
+            mainCycle();
+        else
+            drawPause();
         break;
     }
 }
