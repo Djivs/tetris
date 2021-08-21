@@ -28,17 +28,20 @@ private:
     QGraphicsView *view;
     QGridLayout *layout;
     QSpinBox *linesBox;
+    QLabel *linesLabel;
+    QVBoxLayout *linesLayout;
 
 
     TetrisPiece *curPiece;
 
-    bool board[20][10] = {};
+    int board[20][10] = {};
     bool gameover=0;
 
     int maxHeight = 19;
     int lines = 0;
 
     const QString piecesTypes = "ZSLJOIT";
+    const QColor colors[5] = {Qt::white, Qt::red, Qt::blue, Qt::darkGreen, Qt::magenta};
 
     void mainCycle();
 

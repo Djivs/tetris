@@ -9,13 +9,23 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
     linesBox->setValue(0);
     linesBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
+    linesLabel = new QLabel("Lines cleared:");
+    linesLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    linesLayout = new QVBoxLayout();
+    linesLayout->addStretch();
+    linesLayout->addWidget(linesLabel);
+    linesLayout->addWidget(linesBox);
+    linesLayout->addStretch();
+    linesLayout->setAlignment(Qt::AlignCenter);
+
     //auto spacer_left = new QSpacerItem(10, 10, QSizePolicy::Expanding);
     auto spacer_right = new QSpacerItem(10, 10, QSizePolicy::Expanding);
 
 
     layout = new QGridLayout();
     layout->addWidget(view, 0, 1);
-    layout->addWidget(linesBox, 0, 0);
+    layout->addLayout(linesLayout, 0, 0);
     layout->addItem(spacer_right, 1, 2);
     view->setAlignment(Qt::AlignCenter);
 
@@ -31,7 +41,7 @@ void GameWidget::mainCycle() {
     makeLogic();
     drawGame();
     if (!gameover)
-        QTimer::singleShot(1000 - 100 * (lines % 10), this, [this] {mainCycle();});
+        QTimer::singleShot(900 - 30 * (lines % 10), this, [this] {mainCycle();});
 }
 void GameWidget::drawGame() {
     scene.clear();
@@ -41,11 +51,7 @@ void GameWidget::drawGame() {
         for (int j = 0; j < 10; ++j) {
             QRect cubeRect(25 * j, 25 * i, 25, 25);
             QPen pen;
-            if (board[i][j]) {
-                pen.setColor(Qt::black);
-            } else {
-                pen.setColor(Qt::white);
-            }
+            pen.setColor(colors[board[i][j]]);
             scene.addRect(cubeRect, pen, QBrush(pen.color()));
         }
     }
@@ -76,40 +82,61 @@ void GameWidget::makeLogic() {
 }
 
 void GameWidget::keyPressEvent(QKeyEvent *event) {
-    if (event->key() == Qt::Key_K && isGoingDown()) {
-        removePiece();
-        curPiece->move('d');
-        addPiece();
-        drawGame();
-    } else if(event->key() == Qt::Key_J && isGoingLeft()) {
-        removePiece();
-        curPiece->move('l');
-        addPiece();
-        drawGame();
-    } else if(event->key() == Qt::Key_L && isGoingRight()) {
-        removePiece();
-        curPiece->move('r');
-        addPiece();
-        drawGame();
-    } else if(event->key() == Qt::Key_F && isRotating(1)) {
-        removePiece();
-        curPiece->rotate(1);
-        addPiece();
-        drawGame();
-    } else if(event->key() == Qt::Key_D && isRotating(0)) {
-        removePiece();
-        curPiece->rotate(0);
-        addPiece();
-        drawGame();
+
+    switch (event->key()) {
+    case Qt::Key_K:
+        if (isGoingDown()) {
+            removePiece();
+            curPiece->move('d');
+            addPiece();
+            drawGame();
+        }
+        break;
+    case Qt::Key_J:
+        if(isGoingLeft()) {
+            removePiece();
+            curPiece->move('l');
+            addPiece();
+            drawGame();
+        }
+        break;
+    case Qt::Key_L:
+        if(isGoingRight()) {
+            removePiece();
+            curPiece->move('r');
+            addPiece();
+            drawGame();
+        }
+        break;
+    case Qt::Key_F:
+        if(isRotating(1)) {
+            removePiece();
+            curPiece->rotate(1);
+            addPiece();
+            drawGame();
+        }
+        break;
+    case Qt::Key_D:
+        if(isRotating(0)) {
+            removePiece();
+            curPiece->rotate(0);
+            addPiece();
+            drawGame();
+        }
+        break;
+    case Qt::Key_P:
+        gameover = !gameover;
+        mainCycle();
+        break;
     }
 }
 
 void GameWidget::clearLines() {
     maxHeight = std::min(maxHeight, 20 - curPiece->getTopCoord() - 1);
-    for (int i = 19; i > maxHeight; --i) {
+    for (int i = 20 - curPiece->getDownCoord(); i > maxHeight; --i) {
         int count = 0;
         for (int j = 0; j < 10; ++j) {
-            count += board[i][j];
+            count += (bool)board[i][j];
         }
         if (count == 10) {
             ++lines;
@@ -122,15 +149,15 @@ void GameWidget::clearLines() {
             ++i;
         }
     }
-    qDebug() << maxHeight;
     linesBox->setValue(lines);
 }
 
 
 void GameWidget::addPiece() {
     QVector <QPoint> pieceCells = curPiece->getCells();
+    int k = curPiece->getColor();
     for(auto &i: pieceCells) {
-        board[20 - i.y()][i.x()-1] = 1;
+        board[20 - i.y()][i.x()-1] = k;
     }
 }
 

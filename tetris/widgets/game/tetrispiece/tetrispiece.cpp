@@ -8,6 +8,8 @@ TetrisPiece::TetrisPiece(TetrisPiece *parent, QChar _type) {
         return;
     }
 
+    color = QRandomGenerator::global()->generate() % 4 + 1;
+
     switch (type.toLatin1()) {
         case 'O':
             cells.push_back(QPoint(5, 20));

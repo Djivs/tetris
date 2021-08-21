@@ -5,6 +5,7 @@
 #include <QPoint>
 #include <QDebug>
 #include <QTime>
+#include <QRandomGenerator>
 
 class TetrisPiece : public QObject
 {
@@ -22,9 +23,12 @@ public:
     int getLeftCoord();
     int getTopCoord();
     int getDownCoord();
+
+    int getColor() const {return color;}
 protected:
     QVector <QPoint> cells;
     QChar type;
+    int color;
 signals:
 
 };
