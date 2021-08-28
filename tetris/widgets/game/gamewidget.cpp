@@ -24,7 +24,7 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
     speedBox = new QSpinBox();
     speedBox->setEnabled(false);
     speedBox->setMaximum(1000);
-    speedBox->setValue(900);
+    speedBox->setValue(speed);
     speedBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     speedLabel = new QLabel("Current speed(ms):");
@@ -41,7 +41,6 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
     statsLayout->addStretch();
     statsLayout->setAlignment(Qt::AlignCenter);
 
-    //auto spacer_left = new QSpacerItem(10, 10, QSizePolicy::Expanding);
     auto spacer_right = new QSpacerItem(10, 10, QSizePolicy::Expanding);
 
 
@@ -102,6 +101,7 @@ void GameWidget::makeLogic() {
         addPiece();
         if (!isGoingDown()) {
             gameover = true;
+            speed = startingSpeed;
             QMessageBox msgBox;
             msgBox.setText("You failed.\n Wanna try again?");
             msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -196,9 +196,9 @@ void GameWidget::clearLines() {
         }
     }
     linesBox->setValue(lines);
-    level = lines / 10;
+    level = lines / 2;
     levelBox->setValue(level);
-    speed = 900 - level * 30;
+    speed = startingSpeed - level * 30;
     speedBox->setValue(speed);
 }
 

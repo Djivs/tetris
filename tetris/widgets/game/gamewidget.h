@@ -47,7 +47,9 @@ private:
 
     int lines = 0;
     int level = 0;
-    int speed = 900;
+    int speed = 500;
+
+    const int startingSpeed = 500;
 
     const QString piecesTypes = "ZSLJOIT";
     const QColor colors[5] = {Qt::black, Qt::red, Qt::blue, Qt::darkGreen, Qt::magenta};
