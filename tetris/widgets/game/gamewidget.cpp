@@ -57,7 +57,7 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
 
     setLayout(layout);
 
-    piecesImage.load("/home/dmitriy/Загрузки/D7UtvBQWsAAiLzb.jpg");
+    piecesImage.load("../tetris/img/tetrisPieces.jpg");
 
     nextPiece = randomTetrisPiece();
     setNextPiecePic();
