@@ -12,6 +12,7 @@
 #include <QSpacerItem>
 #include <QSpinBox>
 #include <QLabel>
+#include <QFrame>
 
 #include "tetrispiece/tetrispiece.h"
 
@@ -30,10 +31,15 @@ private:
 
     QSpinBox *linesBox;
     QLabel *linesLabel;
+
     QSpinBox *levelBox;
     QLabel *levelLabel;
+
     QSpinBox *speedBox;
     QLabel *speedLabel;
+
+    QLabel *nextPieceLabel;
+    QLabel *nextPiecePic;
 
     QVBoxLayout *statsLayout;
 
@@ -49,10 +55,15 @@ private:
     int level = 0;
     int speed = 500;
 
+    QChar nextPiece;
+
     const int startingSpeed = 500;
 
-    const QString piecesTypes = "ZSLJOIT";
+    const QString piecesTypes = "ITOLJSZ";
+    const int piecesCoords[8] = {0, 125, 300, 450, 600, 750, 930, 1152};
     const QColor colors[5] = {Qt::black, Qt::red, Qt::blue, Qt::darkGreen, Qt::magenta};
+
+    QImage piecesImage;
 
     void mainCycle();
 
@@ -64,6 +75,9 @@ private:
     void addPiece();
     void removePiece();
     void clearLines();
+
+    void makeNewPiece();
+    void setNextPiecePic();
 
     bool isGoingDown();
     bool isGoingLeft();

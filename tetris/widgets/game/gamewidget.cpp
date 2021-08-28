@@ -30,14 +30,19 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
     speedLabel = new QLabel("Current speed(ms):");
     speedLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
+    nextPieceLabel = new QLabel("Next piece:");
+    nextPiecePic = new QLabel();
+
     statsLayout = new QVBoxLayout();
     statsLayout->addStretch();
-    statsLayout->addWidget(linesLabel);
+    statsLayout->addWidget(linesLabel);;
     statsLayout->addWidget(linesBox);
     statsLayout->addWidget(levelLabel);
     statsLayout->addWidget(levelBox);
     statsLayout->addWidget(speedLabel);
     statsLayout->addWidget(speedBox);
+    statsLayout->addWidget(nextPieceLabel);
+    statsLayout->addWidget(nextPiecePic);
     statsLayout->addStretch();
     statsLayout->setAlignment(Qt::AlignCenter);
 
@@ -52,7 +57,12 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
 
     setLayout(layout);
 
-    curPiece = new TetrisPiece(nullptr, randomTetrisPiece());
+    piecesImage.load("/home/dmitriy/Загрузки/D7UtvBQWsAAiLzb.jpg");
+
+    nextPiece = randomTetrisPiece();
+    setNextPiecePic();
+
+    makeNewPiece();
     addPiece();
 
     mainCycle();
@@ -97,11 +107,13 @@ void GameWidget::makeLogic() {
     } else {
         clearLines();
         delete curPiece;
-        curPiece = new TetrisPiece(nullptr, randomTetrisPiece());
+        makeNewPiece();
         addPiece();
         if (!isGoingDown()) {
             gameover = true;
             speed = startingSpeed;
+            speedBox->setValue(startingSpeed);
+            lines = 0;
             QMessageBox msgBox;
             msgBox.setText("You failed.\n Wanna try again?");
             msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -114,7 +126,7 @@ void GameWidget::makeLogic() {
                         board[i][j] = 0;
                     }
                 }
-                curPiece = new TetrisPiece(nullptr, randomTetrisPiece());
+                makeNewPiece();
                 addPiece();
 
                 mainCycle();
@@ -216,6 +228,19 @@ void GameWidget::removePiece() {
     for(auto &i: pieceCells) {
         board[20 - i.y()][i.x()-1] = 0;
     }
+}
+
+void GameWidget::makeNewPiece() {
+    curPiece = new TetrisPiece(nullptr, nextPiece);
+    nextPiece = randomTetrisPiece();
+    setNextPiecePic();
+}
+
+void GameWidget::setNextPiecePic() {
+    QPixmap p = QPixmap::fromImage(piecesImage);
+    int startingIndex = piecesTypes.indexOf(nextPiece);
+    p = p.copy(QRect(piecesCoords[startingIndex], 0, piecesCoords[startingIndex+1] - piecesCoords[startingIndex], 240));
+    nextPiecePic->setPixmap(p.scaled(75, 75 , Qt::KeepAspectRatio));
 }
 
 bool GameWidget::isGoingDown() {
