@@ -1,6 +1,10 @@
 #include "gamewidget.h"
 
 GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
+    goBack = new QPushButton("Go to menu");
+    goBack->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    connect(goBack, &QPushButton::clicked, this, [this] {emit gameOver();});
     view = new QGraphicsView(this);
     view->setMaximumSize(25 * 10 + 10, 25 * 20 + 3);
 
@@ -46,13 +50,14 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
     statsLayout->addStretch();
     statsLayout->setAlignment(Qt::AlignCenter);
 
-    auto spacer_right = new QSpacerItem(10, 10, QSizePolicy::Expanding);
+    //auto spacer_right = new QSpacerItem(10, 10, QSizePolicy::Expanding);
 
 
     layout = new QGridLayout();
     layout->addWidget(view, 0, 1);
     layout->addLayout(statsLayout, 0, 0);
-    layout->addItem(spacer_right, 1, 2);
+    layout->addWidget(goBack, 0, 2);
+    //layout->addItem(spacer_right, 1, 2);
     view->setAlignment(Qt::AlignCenter);
 
     setLayout(layout);
@@ -62,20 +67,40 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
     nextPiece = randomTetrisPiece();
     setNextPiecePic();
 
+    connect(&timer, &QTimer::timeout, this, [this] {mainCycle();});
+
     makeNewPiece();
     addPiece();
 
     mainCycle();
 }
+GameWidget::~GameWidget() {
+//    gameover = 1;
+//    delete goBack;
+//    delete view;
+//    delete layout;
+
+//    delete linesBox;
+//    delete linesLabel;
+//    delete  levelBox;
+//    delete levelLabel;
+//    delete speedBox;
+//    delete speedLabel;
+//    delete nextPieceLabel;
+//    delete nextPiecePic;
+//    delete statsLayout;
+//    delete curPiece;
+}
 
 void GameWidget::mainCycle() {
-    if (gameover)
+    if (!makeLogic())
         return;
-    makeLogic();
     drawGame();
-    QTimer::singleShot(speed, this, [this] {mainCycle();});
+    timer.start(speed);
 }
 void GameWidget::drawGame() {
+//    if (gameover)
+//        return;
     scene.clear();
 
     ///<- Draw board ->///
@@ -98,18 +123,20 @@ void GameWidget::drawPause() {
     scene.addText("Pause");
 }
 
-void GameWidget::makeLogic() {
+bool GameWidget::makeLogic() {
     if (isGoingDown()) {
         removePiece();
         curPiece->move('d');
         addPiece();
-        return;
-    } else {
+        return 1;
+    } else
+    {
         clearLines();
         delete curPiece;
         makeNewPiece();
         addPiece();
         if (!isGoingDown()) {
+            timer.stop();
             gameover = true;
             speed = startingSpeed;
             speedBox->setValue(startingSpeed);
@@ -117,7 +144,7 @@ void GameWidget::makeLogic() {
             QMessageBox msgBox;
             msgBox.setText("You failed.\n Wanna try again?");
             msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-            if (msgBox.exec()) {
+            if (msgBox.exec() == QMessageBox::Yes) {
                 gameover = false;
                 delete curPiece;
                 lines = 0;
@@ -128,12 +155,16 @@ void GameWidget::makeLogic() {
                 }
                 makeNewPiece();
                 addPiece();
+                return 1;
 
-                mainCycle();
-
+            } else {
+                timer.stop();
+                emit gameOver();
+                return 0;
             }
         }
     }
+    return 1;
 }
 
 void GameWidget::keyPressEvent(QKeyEvent *event) {

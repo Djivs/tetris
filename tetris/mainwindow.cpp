@@ -23,6 +23,8 @@ void MainWindow::setMenu() {
 void MainWindow::setGame() {
     game = new GameWidget();
 
+    connect (game, &GameWidget::gameOver, this, [this] {delete game;setMenu();});
+
     setCentralWidget(game);
 }
 

@@ -13,6 +13,7 @@
 #include <QSpinBox>
 #include <QLabel>
 #include <QFrame>
+#include <QPushButton>
 
 #include "tetrispiece/tetrispiece.h"
 
@@ -22,9 +23,11 @@ class GameWidget : public QWidget
     Q_OBJECT
 public:
     explicit GameWidget(QWidget *parent = nullptr);
+    ~GameWidget();
 protected:
     void keyPressEvent(QKeyEvent *event);
 private:
+    QPushButton *goBack;
     QGraphicsScene scene;
     QGraphicsView *view;
     QGridLayout *layout;
@@ -45,6 +48,8 @@ private:
 
 
     TetrisPiece *curPiece;
+
+    QTimer timer;
 
     int board[20][10] = {};
     bool gameover=0;
@@ -68,7 +73,7 @@ private:
     void mainCycle();
 
     void drawGame();
-    void makeLogic();
+    bool makeLogic();
     void drawPause();
 
 
@@ -89,6 +94,7 @@ private:
     //return 'I';}
 
 signals:
+    void gameOver();
 
 };
 
